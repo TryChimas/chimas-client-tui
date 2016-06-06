@@ -1,5 +1,18 @@
 import urwid
+import requests
 
+class ListButton(urwid.Button):
+    def __init__(self,label,on_press=None,user_data=None):
+        super(ListButton, self).__init__("")
+        #urwid.connect_signal(self, "click", callback)
+#        self._w = urwid.AttrMap(urwid.SelectableIcon([u"\N{BULLET} ", label]), None, 'unselected')
+        self._w = urwid.AttrMap(urwid.SelectableIcon([u"\N{BULLET} ", label]),'unselected', 'selected')
+
+palette =[
+(None, 'light gray', 'default'),
+('unselected', 'white', 'default'),
+('selected', 'black', 'dark green'),
+]
 PADDING_LEFT = 2
 PADDING_RIGHT = 2
 PADDING_TOP = 1
@@ -13,12 +26,14 @@ f_text = urwid.Text('This is test! Okay')
 
 mylist = [urwid.Divider()]
 for c in range(1, 70):
-    mylist.append(urwid.AttrMap(urwid.Button('Board {0}'.format(c)),None,focus_map='reversed'))
+    #mylist.append(urwid.AttrMap(ListButton('Board {0}'.format(c)), 'selected', 'unselected'))
+    #mylist.append(urwid.AttrMap(ListButton('Board {0}'.format(c)),None,focus_map='selected'))
+    mylist.append(ListButton('Board {0}'.format(c)))
 mylist.append(urwid.Divider())
 f_list = urwid.ListBox(urwid.SimpleFocusListWalker(mylist))
 content_padding = urwid.Padding(f_list, left=2, right=2)
 
-content_filler = urwid.Filler(content_padding, top=2, bottom=2)
+content_filler = urwid.Filler(content_padding, top=3, bottom=3)
 
 #content= urwid.BoxAdapter(content_padding,40)
 w_main = urwid.Frame(content_padding, f_header, f_footer)
@@ -27,4 +42,4 @@ w_main = urwid.Frame(content_padding, f_header, f_footer)
 
 
 
-urwid.MainLoop(w_main).run()
+urwid.MainLoop(w_main, palette).run()
