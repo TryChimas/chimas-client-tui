@@ -1,5 +1,11 @@
 import urwid
 import requests
+import json
+
+from requests.auth import HTTPBasicAuth
+
+host = "http://127.0.0.1:41345"
+authdata = ("admin","abc123")
 
 class ListButton(urwid.Button):
     def __init__(self,label,on_press=None,user_data=None):
@@ -24,11 +30,14 @@ f_footer_text = urwid.Text('This is footer')
 f_footer = urwid.Padding(f_footer_text,left=2,right=2)
 f_text = urwid.Text('This is test! Okay')
 
+r = requests.get(host+'/boards', auth=authdata)
+obj = json.loads(r.text)
+
 mylist = [urwid.Divider()]
-for c in range(1, 70):
+for c in obj['_items']:
     #mylist.append(urwid.AttrMap(ListButton('Board {0}'.format(c)), 'selected', 'unselected'))
     #mylist.append(urwid.AttrMap(ListButton('Board {0}'.format(c)),None,focus_map='selected'))
-    mylist.append(ListButton('Board {0}'.format(c)))
+    mylist.append(ListButton('Board {0}'.format(c['title'])))
 mylist.append(urwid.Divider())
 f_list = urwid.ListBox(urwid.SimpleFocusListWalker(mylist))
 content_padding = urwid.Padding(f_list, left=2, right=2)
