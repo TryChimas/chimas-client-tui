@@ -32,6 +32,8 @@ f_text = urwid.Text('This is test! Okay')
 
 r = requests.get(host+'/boards', auth=authdata)
 obj = json.loads(r.text)
+r = requests.get(host+"/posts?where={'board_id':'first board','reply_to_id':'0'}", auth=authdata)
+obj2 = json.loads(r.text)
 
 mylist = [urwid.Divider()]
 for c in obj['_items']:
@@ -51,4 +53,6 @@ w_main = urwid.Frame(content_padding, f_header, f_footer)
 
 
 
-urwid.MainLoop(w_main, palette).run()
+loop=urwid.MainLoop(w_main, palette)
+
+loop.run()
