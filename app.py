@@ -49,7 +49,7 @@ class TopicList(urwid.ListBox):
 
     def load(self):
 
-        r = requests.get(host+"/posts?where={\"board_id\":\"" + self.user_data['title'] + "\",\"reply_to_id\":\"0\"}", auth=authdata)
+        r = requests.get(host+'/posts?where={"board_id":"' + self.user_data['title'] + '", "reply_to_id":"0"}', auth=authdata)
         obj = json.loads(r.text)
 
         mylist = [urwid.Divider()]
@@ -111,7 +111,5 @@ class WindowFrame(urwid.Frame):
         self.set_body(self.threadposts)
 
 w_main = WindowFrame()
-
-loop=urwid.MainLoop(w_main, palette)
-
+loop = urwid.MainLoop(w_main, palette)
 loop.run()
