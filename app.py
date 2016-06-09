@@ -44,19 +44,19 @@ class BoardList(urwid.ListBox):
         self.body = urwid.SimpleFocusListWalker(mylist)
 
 class BoardTopics(urwid.ListBox):
-    def __init__(self, main_window, board_id):
+    def __init__(self, main_window, user_data):
         super(BoardTopics, self).__init__("")
 
         self.main_window = main_window
-        #self.board_id = board_id
+        self.user_data = user_data
 
-        import pprint
-        pprint.pprint(board_id,width=1)
-        self.load(board_id)
+        #import pprint
+        #pprint.pprint(button,width=1)
+        self.load()
 
-    def load(self, board_id):
+    def load(self):
 
-        r = requests.get(host+'/posts?where={"board_id":"{0}","reply_to_id":"0"}'.format(board_id['title']), auth=authdata)
+        r = requests.get(host+"/posts?where={\"board_id\":\"" + self.user_data['title'] + "\"}", auth=authdata)
         obj = json.loads(r.text)
 
         mylist = [urwid.Divider()]
