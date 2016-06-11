@@ -84,23 +84,51 @@ class ThreadPosts(urwid.Pile):
         for c in obj['_items']:
             #mylist.append(
             mawids = urwid.Text(c['title'])
-            self.contents.append(
-                #('pack', urwid.Text(c['title']))
-                #(mawids, ('pack'))
-                (mawids, ('pack',None))
-                #urwid.Text(c['title'])
 
-                #ListButton('Post: {0}'.format(c['title']), self.main_window.topiclist_callback, c)
-                #urwid.LineBox( [
-                    #urwid.Text(c['title']),
-                    #urwid.Divider(),
-                    #urwid.Text(c['post_text'])#]
-                #])
+            self.contents.append( [urwid.Text(c['title']), ('pack', None)] )
+
+            self.contents.append( [urwid.Text(c['post_text']), ('pack', None)] )
+
+class PostPile(urwid.Pile):
+        def __init__(self, main_window, title, author_id, post_text, created, widget_list=[], focus_item=None):
+
+            super(PostPile, self).__init__([])
+
+            self.main_window = main_window
+            #self.user_data = user_data
+
+            #self.load()
+
+            #def load(self,title,author_id,post_text,created):
+
+            self.contents.append( [urwid.Text(title), ('pack', None)] )
+            self.contents.append( [urwid.Text(author_id), ('pack', None)] )
+            self.contents.append( [urwid.Text(post_text), ('pack', None)] )
+
+class ThreadList(urwid.ListBox):
+    def __init__(self, main_window, user_data):
+        super(ThreadList, self).__init__("")
+
+        self.main_window = main_window
+        self.user_data = user_data
+
+        self.load()
+
+    def load(self):
+
+        r = requests.get(host+'/posts?where={"topic_id":"' + self.user_data['id'].__str__() + '"}', auth=authdata)
+
+        obj = json.loads(r.text)
+
+        mylist = [urwid.Divider()]
+        for c in obj['_items']:
+            mylist.append(
+                #ListButton('Topic {0}'.format(c['title']), self.main_window.topiclist_callback, c)
+                PostPile(main_window=self.main_window, title=c['title'],author_id=c['author_id'],post_text=c['post_text'],created=c['created'])
             )
-        #mylist.append(urwid.Divider())
-        #self.body = urwid.SimpleFocusListWalker(mylist)
-        #self.widget_list = mylist
-        #self.contents.append(mylist)
+            mylist.append(urwid.Divider())
+
+        self.body = urwid.SimpleFocusListWalker(mylist)
 
 class WindowFrame(urwid.Frame):
     def __init__(self, body=None, header=None, footer=None, focus_part='body'):
@@ -126,9 +154,9 @@ class WindowFrame(urwid.Frame):
 
     def topiclist_callback(self, button, user_data):
 
-        self.threadposts = ThreadPosts(self, user_data=user_data)
+        self.threadlist = ThreadList(self, user_data=user_data)
 
-        self.set_body(self.threadposts)
+        self.set_body(self.threadlist)
         #myPile = urwid.Pile([('pack'), urwid.Text("oi"), urwid.Text("ei"), urwid.Text("hello buddy")])
         #self.set_body(myPile)
 
